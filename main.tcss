@@ -1,0 +1,69 @@
+#sidebar {
+    width: 15%;
+    border: solid $primary;
+}
+
+#main-content {
+    border: solid $primary;
+}
+
+.task-item {
+    border: solid $primary-darken-1;
+    height: 3;
+}
+
+.task-item-tags {
+    dock: right;
+    color: $secondary;
+}
+
+TaskDialog {
+    align: center middle;
+}
+
+#task-dialog {
+    width: 90;
+    height: 22;
+    border: solid $accent 80%;
+    background: $surface-lighten-2;
+    padding: 1 4;
+    
+    /* Grid configuration */
+    grid-size: 2;
+    grid-gutter: 1 2;
+    grid-rows: 1fr 1fr 4fr 1fr;
+    grid-columns: 1fr 3fr;
+    
+}
+
+#dialog-title {
+    text-align: center;
+    text-style: bold;
+    color: $primary;
+    column-span: 2;
+    margin-bottom: 1;
+}
+
+.form-label {
+    content-align: right middle;
+}
+
+/* Style form inputs */
+Input {
+    width: 100%;
+}
+
+/* Style the multiline description input */
+.multiline {
+    height: 6;
+}
+
+#button-container {
+    column-span: 2;
+    layout: horizontal;
+    align: center middle;
+}
+
+#save-button {
+    margin-right: 5;
+}
