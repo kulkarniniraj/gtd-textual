@@ -7,6 +7,12 @@
     border: solid $primary;
 }
 
+SidebarItem.disabled  {
+    color: $text-muted;
+    background: $primary-muted
+
+}
+
 TaskDialog {
     align: center middle;
 }

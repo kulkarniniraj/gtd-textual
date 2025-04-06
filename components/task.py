@@ -1,6 +1,5 @@
 from typing import Coroutine
-
-from textual_datepicker import DatePicker, DateSelect
+import time
 
 from components.side import Sidebar, SidebarItem
 from textual.app import App, ComposeResult
@@ -15,7 +14,7 @@ from textual.widgets import (Button, Checkbox, Footer, Header, Input, Label,
 import dl
 import logger.utils as logger_utils
 
-class TaskDialog(ModalScreen):
+class TaskDialog(ModalScreen[bool]):
     BINDINGS = [("d", "datepick", "Date Picker"),
                 ("escape", "dismiss", "Cancel")]
     
@@ -53,7 +52,8 @@ class TaskDialog(ModalScreen):
         yield td
         
     def on_button_pressed(self, event: Button.Pressed) -> None:        
-        if event.button.label == "Save":
+        logger_utils.info(f"Button pressed: {event.button.label} {event.button.id} {event.button.id == 'save-button'}")
+        if event.button.id == "save-button":
             title = self.query_one("#title-input").value
             tags = self.query_one("#tags-input").value
             parts = tags.split(',')
@@ -63,12 +63,13 @@ class TaskDialog(ModalScreen):
                     tag = part[1:]
                 elif part.startswith('@'):
                     project = part[1:]
-            description = self.query_one("#desc-input").value
+            description = self.query_one("#desc-input").text
 
             self.item.title = title
             self.item.tag = tag
             self.item.project = project
             self.item.description = description
+            logger_utils.info(f"Saving task: {self.item}")
             dl.save_task(self.item)
             self.dismiss(True)
         else:
@@ -100,7 +101,7 @@ class TaskList(ListView):
         # State['index'] = self.index
 
     def on_mount(self):
-        logger_utils.info("Mounting TaskList")
+        logger_utils.info(f"Mounting TaskList {time.time()}")
         # restore_focus(self.app)
 
 class TaskScreen(Vertical):
@@ -108,11 +109,20 @@ class TaskScreen(Vertical):
                 ("space", "mark_complete", "Mark Complete")]
 
     tag = reactive('inbox', recompose=True)
+    task_list = reactive([], recompose=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.update_task_list()
+        
+    def update_task_list(self):
+        self.task_list = dl.get_all_tasks()
+
     def on_mount(self):
-        logger_utils.info(f"TaskScreen mounted: {self.tag}")
+        logger_utils.info(f"TaskScreen mounted: {self.tag} {time.time()}")
 
     def filter_tasks(self):
-        todo_tasks = dl.get_all_tasks()
+        todo_tasks = self.task_list
         if self.tag == 'inbox':
             tasks = [x for x in todo_tasks if x.done != 1]
         elif self.tag == 'finished':
@@ -123,6 +133,7 @@ class TaskScreen(Vertical):
         return tasks
 
     def compose(self) -> ComposeResult:
+        logger_utils.info(f"Composing TaskScreen {time.time()}")
         yield TaskList(
             *[
                 TaskItem(task)
@@ -144,13 +155,18 @@ class TaskScreen(Vertical):
     def action_mark_complete(self):
         active_task = self.query_one('#task-list').highlighted_child
         if active_task is not None:
-            print(f"Active task: {active_task.todo_task.title}")
-            active_task.todo_task.done = 1
-            dl.save_task(active_task.todo_task)            
-            self.todo_tasks = dl.get_all_tasks()
+            logger_utils.info(f"Active task: {active_task.todo_task.title}")
+            if active_task.todo_task.done == 0 or active_task.todo_task.done == None:
+                active_task.todo_task.done = 1
+            else:
+                active_task.todo_task.done = 0
+            dl.save_task(active_task.todo_task)  
+            self.update_task_list()
+            self.refresh(recompose=True)
         # self.query_one('#task-list').focus()
 
     def task_details_popup(self, task_item: dl.Task = None):
         if task_item is None:
             task_item = dl.create_empty_task()
-        self.app.push_screen(TaskDialog(task_item = task_item))
+        self.app.push_screen(TaskDialog(task_item = task_item), 
+                             lambda x: (self.update_task_list() or self.refresh(recompose=True)) if x is True else None )

@@ -45,10 +45,12 @@ class MainWin(Horizontal):
                 SidebarItem("Scheduled", "scheduled"),
                 SidebarItem("Maybe", "maybe"),
                 SidebarItem("Waiting", "waiting"),
-                SidebarItem("Projects", "projects"),
+                SidebarItem("", "", disabled=True),
+                SidebarItem("Projects", "projects", disabled=True, classes="disabled"),
                 SidebarItem("Project 1", "project1"),
                 SidebarItem("Project 2", "project2"),
                 SidebarItem("Project 3", "project3"),
+                SidebarItem("", "", disabled=True),
                 SidebarItem("Finished Tasks", "finished"),
             ),
             id="sidebar"

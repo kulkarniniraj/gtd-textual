@@ -6,6 +6,7 @@ from datetime import datetime
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey, BLOB
 from sqlalchemy.orm import sessionmaker, declarative_base
 
+import logger.utils as logger_utils
 """
 SQLAlchemy model to save each gtd task. 
 Columns: id, orderid, title, description, project, create date, update date, done (bool)
@@ -26,6 +27,9 @@ class Task(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     done = Column(Integer, default=0)  # Using Integer as SQLite doesn't have native boolean
 
+    def __repr__(self):
+        return f"Task(id={self.id}, title={self.title}, description={self.description}, project={self.project}, tag={self.tag}, created_at={self.created_at}, updated_at={self.updated_at}, done={self.done})"
+
 # Generate the table in the database if it doesn't exist
 engine = create_engine('sqlite:///gtd.db')
 Base.metadata.create_all(engine)
@@ -44,13 +48,16 @@ def save_task(task):
     """
     Save a task to the database.
     """
-    if task.created_at is None:
-        task.created_at = datetime.utcnow()
-    task.updated_at = datetime.utcnow()
+    try:
+        if task.created_at is None:
+            task.created_at = datetime.utcnow()
+        task.updated_at = datetime.utcnow()
 
-    with Session() as session:
-        session.add(task)
-        session.commit()
+        with Session() as session:
+            session.add(task)
+            session.commit()
+    except Exception as e:
+        logger_utils.error(f"Error saving task: {e}")
 
 
 def get_all_tasks():

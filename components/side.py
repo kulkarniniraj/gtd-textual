@@ -1,4 +1,5 @@
 from typing import Coroutine
+import time
 
 from textual.app import App, ComposeResult
 from textual.binding import Binding
@@ -14,7 +15,7 @@ import logger.utils as logger_utils
 class Sidebar(ListView):
 
     def on_list_view_highlighted(self, event: ListView.Highlighted):
-        print(f"Sidebar Highlighted: {event.item} {self.index}")
+        print(f"Sidebar Highlighted: {event.item} {self.index} {time.time()}")
         logger_utils.info(f"Sidebar Highlighted: {event.item} idx: {self.highlighted_child}")
         # State['focus'] = 'sidebar'
         # State['index'] = self.index
@@ -32,8 +33,8 @@ class Sidebar(ListView):
         logger_utils.info(f"Sidebar Blurred: {event} idx: {self.index}")
 
 class SidebarItem(ListItem):
-    def __init__(self, label: str, tag: str):
-        super().__init__()
+    def __init__(self, label: str, tag: str, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.label = label
         self.tag = tag
 
