@@ -1,0 +1,6 @@
+**/__pycache__/**
+*.db
+scratch*
+tutorial.py
+todo.md
+stopwatch.tcss
