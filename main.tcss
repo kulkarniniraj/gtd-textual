@@ -7,16 +7,6 @@
     border: solid $primary;
 }
 
-.task-item {
-    border: solid $primary-darken-1;
-    height: 3;
-}
-
-.task-item-tags {
-    dock: right;
-    color: $secondary;
-}
-
 TaskDialog {
     align: center middle;
 }
@@ -36,6 +26,34 @@ TaskDialog {
     
 }
 
+TaskDialog Input {
+    padding: 0 1;
+    border: none;
+}
+
+TaskDialog .multiline {
+    border: none;
+}
+
+TaskDialog #button-container {
+    
+}
+
+.task-item {
+    border: solid $primary-darken-1;
+    height: 3;
+}
+
+TaskItem .task-item-tags {
+    dock: right;
+    color: $secondary;
+}
+
+TaskItem Checkbox {
+    border: none;
+
+}
+
 #dialog-title {
     text-align: center;
     text-style: bold;
@@ -53,10 +71,7 @@ Input {
     width: 100%;
 }
 
-/* Style the multiline description input */
-.multiline {
-    height: 6;
-}
+
 
 #button-container {
     column-span: 2;

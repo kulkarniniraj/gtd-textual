@@ -21,7 +21,7 @@ class Task(Base):
     title = Column(String)
     description = Column(String)
     project = Column(String)
-    context = Column(BLOB) # context, stored as jsonb
+    tag = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     done = Column(Integer, default=0)  # Using Integer as SQLite doesn't have native boolean
@@ -37,21 +37,26 @@ def create_empty_task():
     """
     Create a new task with empty fields.
     """
-    task = Task()
+    task = Task(title='', description='', project='default', tag='inbox')
     return task
 
 def save_task(task):
     """
     Save a task to the database.
     """
-    session = Session()
-    session.add(task)
-    session.commit()
+    if task.created_at is None:
+        task.created_at = datetime.utcnow()
+    task.updated_at = datetime.utcnow()
+
+    with Session() as session:
+        session.add(task)
+        session.commit()
+
 
 def get_all_tasks():
     """
     Get all tasks from the database.
     """
-    session = Session()
-    tasks = session.query(Task).order_by(Task.orderid).all()
-    return tasks
+    with Session() as session:
+        tasks = session.query(Task).order_by(Task.orderid).all()
+        return tasks
