@@ -9,14 +9,15 @@ from textual.events import Key
 from textual.reactive import reactive
 from textual.screen import ModalScreen, Screen
 from textual.widgets import (Button, Checkbox, Footer, Header, Input, Label,
-                             ListItem, ListView, Static, TextArea)
+                             ListItem, ListView, Static, TextArea, Select)
 
 import dl
 import logger.utils as logger_utils
 
 class TaskDialog(ModalScreen[bool]):
     BINDINGS = [("d", "datepick", "Date Picker"),
-                ("escape", "dismiss", "Cancel")]
+                ("escape", "dismiss", "Cancel"),
+                ("ctrl+s", "save", "Save")]
     
     def __init__(self, task_item: dl.Task, context = 'inbox', *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -30,13 +31,23 @@ class TaskDialog(ModalScreen[bool]):
             picker_mount=self,            
         )
 
+    def action_save(self):
+        self.save_task()
+
     def compose(self) -> ComposeResult:
+        tag_list = [('Inbox', 'inbox'), ('Next', 'next'), ('Scheduled', 'scheduled'), ('Maybe', 'maybe'), ('Waiting', 'waiting')]
+        project_list = [('Default', 'default'), ('Project 1', 'project1'), ('Project 2', 'project2'), ('Project 3', 'project3')]
         td = Grid(
             Label("Title:", classes="form-label"),
             Input(id="title-input", placeholder="Enter title...", value=self.title),
             
-            Label("Tags:", classes="form-label"),
-            Input(id="tags-input", placeholder="Enter tags (comma separated)...", value=self.tags),
+            # Label("Tags:", classes="form-label"),
+            # Input(id="tags-input", placeholder="Enter tags (comma separated)...", value=self.tags),
+            Label("Tag:", classes="form-label"),
+            Select(tag_list, id="tag-input", value=self.item.tag),
+            Label("Project:", classes="form-label"),
+            Select(project_list, id="project-input", value=self.item.project),
+                
             
             Label("Description:", classes="form-label"),
             TextArea(id="desc-input", classes="multiline", text=self.description),
@@ -50,30 +61,27 @@ class TaskDialog(ModalScreen[bool]):
         )
         td.border_title = "Task Details"
         yield td
-        
+        yield Footer()
+
     def on_button_pressed(self, event: Button.Pressed) -> None:        
         logger_utils.info(f"Button pressed: {event.button.label} {event.button.id} {event.button.id == 'save-button'}")
         if event.button.id == "save-button":
-            title = self.query_one("#title-input").value
-            tags = self.query_one("#tags-input").value
-            parts = tags.split(',')
-            tag, project = '', ''
-            for part in parts:
-                if part.startswith('#'):
-                    tag = part[1:]
-                elif part.startswith('@'):
-                    project = part[1:]
-            description = self.query_one("#desc-input").text
-
-            self.item.title = title
-            self.item.tag = tag
-            self.item.project = project
-            self.item.description = description
-            logger_utils.info(f"Saving task: {self.item}")
-            dl.save_task(self.item)
-            self.dismiss(True)
+            self.save_task()            
         else:
             self.dismiss(False)
+
+    def save_task(self):
+        title = self.query_one("#title-input").value            
+        tag = self.query_one("#tag-input").value
+        project = self.query_one("#project-input").value
+        description = self.query_one("#desc-input").text
+        self.item.title = title
+        self.item.tag = tag
+        self.item.project = project
+        self.item.description = description
+        logger_utils.info(f"Saving task: {self.item}")
+        dl.save_task(self.item)
+        self.dismiss(True)
 
 class TaskItem(ListItem):
     
@@ -123,12 +131,22 @@ class TaskScreen(Vertical):
 
     def filter_tasks(self):
         todo_tasks = self.task_list
-        if self.tag == 'inbox':
-            tasks = [x for x in todo_tasks if x.done != 1]
-        elif self.tag == 'finished':
+        if self.tag == 'finished':
             tasks = [x for x in todo_tasks if x.done == 1]
         else:
-            tasks = todo_tasks
+            tasks = [x for x in todo_tasks if x.done != 1]
+            if self.tag == 'inbox':
+                tasks = [x for x in todo_tasks if x.tag == 'inbox']
+            elif self.tag == 'next':
+                tasks = [x for x in todo_tasks if x.tag == 'next']
+            elif self.tag == 'scheduled':
+                tasks = [x for x in todo_tasks if x.tag == 'scheduled']
+            elif self.tag == 'maybe':
+                tasks = [x for x in todo_tasks if x.tag == 'maybe']
+            elif self.tag == 'waiting':
+                tasks = [x for x in todo_tasks if x.tag == 'waiting']
+            else:
+                tasks = todo_tasks
         logger_utils.info(f"Filtering tasks: {tasks}")
         return tasks
 

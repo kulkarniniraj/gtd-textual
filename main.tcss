@@ -17,9 +17,16 @@ TaskDialog {
     align: center middle;
 }
 
+TaskDialog Select {
+    border: none;
+    
+    
+}
+
+
 #task-dialog {
     width: 90;
-    height: 22;
+    height: 25;
     border: solid $accent 80%;
     background: $surface-lighten-2;
     padding: 1 4;
@@ -27,18 +34,24 @@ TaskDialog {
     /* Grid configuration */
     grid-size: 2;
     grid-gutter: 1 2;
-    grid-rows: 1fr 1fr 4fr 1fr;
-    grid-columns: 1fr 3fr;
+    grid-rows: 3 3 3 5 1fr;
+    grid-columns: 1fr 5fr;
     
 }
 
 TaskDialog Input {
-    padding: 0 1;
+    padding: 1 1;
+    border: none;
+    margin: 0 1;
+}
+
+TaskDialog #title-input,#tag-input,#project-input {
     border: none;
 }
 
 TaskDialog .multiline {
     border: none;
+    margin: 0 1;
 }
 
 TaskDialog #button-container {
@@ -69,7 +82,8 @@ TaskItem Checkbox {
 }
 
 .form-label {
-    content-align: right middle;
+    align: center middle;
+    padding: 1 0;
 }
 
 /* Style form inputs */
