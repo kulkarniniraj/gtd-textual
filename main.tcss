@@ -1,3 +1,5 @@
+/***************** Main Content **************/
+
 #sidebar {
     width: 15%;
     border: solid $primary;
@@ -13,16 +15,32 @@ SidebarItem.disabled  {
 
 }
 
+/***************** Task Item **************/
+
+.task-item {
+    border: solid $primary-darken-1;
+    height: 3;
+}
+
+TaskItem .task-item-tags {
+    dock: right;
+    color: $secondary;
+}
+
+TaskItem Checkbox {
+    border: none;
+
+}
+
+/***************** Task Dialog **************/
+
 TaskDialog {
     align: center middle;
 }
 
 TaskDialog Select {
-    border: none;
-    
-    
+    border: none;       
 }
-
 
 #task-dialog {
     width: 90;
@@ -58,20 +76,6 @@ TaskDialog #button-container {
     
 }
 
-.task-item {
-    border: solid $primary-darken-1;
-    height: 3;
-}
-
-TaskItem .task-item-tags {
-    dock: right;
-    color: $secondary;
-}
-
-TaskItem Checkbox {
-    border: none;
-
-}
 
 #dialog-title {
     text-align: center;
@@ -91,8 +95,6 @@ Input {
     width: 100%;
 }
 
-
-
 #button-container {
     column-span: 2;
     layout: horizontal;
@@ -101,4 +103,37 @@ Input {
 
 #save-button {
     margin-right: 5;
+}
+
+/***************** Schedule picker **************/
+
+SchedPicker {
+    align: center middle;
+    
+}
+
+SchedPicker Vertical {
+    width: 40;
+    height: auto;
+    background: $surface-lighten-3;
+}
+
+SchedPicker Label {
+    text-align: center;
+    width: 100%;
+}
+
+SchedPicker Select {
+    background: $surface-lighten-1;
+    margin: 1 0;
+}
+
+#sched-container {
+    border: solid $accent 80%;
+    background: $surface-lighten-2;
+    padding: 1 1;
+}
+
+#sched-picker {
+    
 }

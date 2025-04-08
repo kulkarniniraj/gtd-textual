@@ -25,6 +25,7 @@ class Task(Base):
     tag = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    scheduled_at = Column(DateTime)
     done = Column(Integer, default=0)  # Using Integer as SQLite doesn't have native boolean
 
     def __repr__(self):

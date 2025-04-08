@@ -11,6 +11,8 @@ from textual.screen import ModalScreen, Screen
 from textual.widgets import (Button, Checkbox, Footer, Header, Input, Label,
                              ListItem, ListView, Static, TextArea, Select)
 
+from components.side import Sidebar, SidebarItem
+from components.sched import SchedPicker
 import dl
 import logger.utils as logger_utils
 
@@ -69,6 +71,15 @@ class TaskDialog(ModalScreen[bool]):
             self.save_task()            
         else:
             self.dismiss(False)
+
+    def on_select_changed(self, event) -> None:
+        if (event.select.id == "tag-input") and (event.select.value != self.item.tag) and (event.select.value == 'scheduled'):
+            self.app.push_screen(SchedPicker(), self.on_screen_dismissed)
+        
+    def on_screen_dismissed(self, value) -> None:
+        self.item.tag = 'scheduled'
+        self.item.scheduled_at = value
+        self.refresh(recompose=True)
 
     def save_task(self):
         title = self.query_one("#title-input").value            
