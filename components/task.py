@@ -1,7 +1,7 @@
 from typing import Coroutine
 import time
 
-from components.side import Sidebar, SidebarItem
+
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Container, Grid, Horizontal, Vertical
@@ -104,7 +104,11 @@ class TaskItem(ListItem):
         print(f"Composing TaskItem for {self.todo_task.title}")
         check_label = True if self.todo_task.done == 1 else False
         # check_label = True
-        tag_label = f'#{self.todo_task.tag:20} @{self.todo_task.project}'
+        if self.todo_task.scheduled_at is not None:
+            sched_label = self.todo_task.tag + " " + self.todo_task.scheduled_at.strftime("%Y-%m-%d")
+        else:
+            sched_label = self.todo_task.tag
+        tag_label = f'#{sched_label:40} @{self.todo_task.project}'
         yield Horizontal(
             Checkbox(value=check_label),
             Label(self.todo_task.title),            
