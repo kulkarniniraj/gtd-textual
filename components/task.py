@@ -151,17 +151,17 @@ class TaskScreen(Vertical):
         else:
             tasks = [x for x in todo_tasks if x.done != 1]
             if self.tag == 'inbox':
-                tasks = [x for x in todo_tasks if x.tag == 'inbox']
+                tasks = [x for x in tasks if x.tag == 'inbox']
             elif self.tag == 'next':
-                tasks = [x for x in todo_tasks if x.tag == 'next']
+                tasks = [x for x in tasks if x.tag == 'next']
             elif self.tag == 'scheduled':
-                tasks = [x for x in todo_tasks if x.tag == 'scheduled']
+                tasks = [x for x in tasks if x.tag == 'scheduled']
             elif self.tag == 'maybe':
-                tasks = [x for x in todo_tasks if x.tag == 'maybe']
+                tasks = [x for x in tasks if x.tag == 'maybe']
             elif self.tag == 'waiting':
-                tasks = [x for x in todo_tasks if x.tag == 'waiting']
+                tasks = [x for x in tasks if x.tag == 'waiting']
             else:
-                tasks = todo_tasks
+                tasks = tasks
         logger_utils.info(f"Filtering tasks: {tasks}")
         return tasks
 
