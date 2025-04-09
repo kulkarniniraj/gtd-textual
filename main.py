@@ -1,5 +1,5 @@
 from typing import Coroutine
-
+from datetime import datetime, timedelta
 from textual_datepicker import DatePicker, DateSelect
 
 from textual.app import App, ComposeResult
@@ -30,7 +30,21 @@ def restore_focus(app: App):
     elif State['focus'] == 'sidebar':
         app.query_one('Sidebar').index = State['index']
         app.query_one('Sidebar').focus()
-        
+
+def adjust_dates():
+    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+
+    tasks = dl.get_all_tasks()
+    for task in tasks:
+        if task.scheduled_at is not None:
+            if task.scheduled_at < today:
+                task.tag = 'next'
+                task.scheduled_at = today
+                dl.save_task(task)
+            elif task.scheduled_at == today:
+                task.tag = 'next'
+                dl.save_task(task)
+
 class MainWin(Horizontal):
     
     def on_mount(self):
@@ -63,9 +77,6 @@ class MainWin(Horizontal):
         )
         main_view.border_title = "Inbox"
         yield main_view
-
-    
-
 # --- Main App ---
 class GTDApp(App):
     title = "GTD App"
@@ -88,5 +99,6 @@ class GTDApp(App):
 
 
 if __name__ == "__main__":
+    adjust_dates()
     app = GTDApp()
     app.run()

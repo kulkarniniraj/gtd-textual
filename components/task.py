@@ -1,6 +1,6 @@
 from typing import Coroutine
 import time
-
+from datetime import datetime, timedelta
 
 from textual.app import App, ComposeResult
 from textual.binding import Binding
@@ -100,18 +100,30 @@ class TaskItem(ListItem):
         super().__init__()
         self.todo_task = todo_task        
 
+    def get_date_str(self, date):
+        """
+        Return Today, Tomorrow, or the date in the format "23 Apr 2025"
+        """
+        if date.date() == datetime.now().date():
+            return "Today"
+        elif date.date() == datetime.now().date() + timedelta(days=1):
+            return "Tomorrow"
+        else:
+            return date.strftime("%d %b %Y")
+
     def compose(self) -> ComposeResult:
         print(f"Composing TaskItem for {self.todo_task.title}")
         check_label = True if self.todo_task.done == 1 else False
         # check_label = True
         if self.todo_task.scheduled_at is not None:
-            sched_label = self.todo_task.tag + " " + self.todo_task.scheduled_at.strftime("%Y-%m-%d")
+            sched_label = (self.todo_task.tag + " (" + 
+                           self.get_date_str(self.todo_task.scheduled_at) + ") ")
         else:
             sched_label = self.todo_task.tag
         tag_label = f'#{sched_label:40} @{self.todo_task.project}'
         yield Horizontal(
             Checkbox(value=check_label),
-            Label(self.todo_task.title),            
+            Label(self.todo_task.title, classes="task-item-title"),            
             Label(tag_label, classes="task-item-tags"),
             classes="task-item"            
         )

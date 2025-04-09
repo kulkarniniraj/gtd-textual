@@ -22,6 +22,10 @@ SidebarItem.disabled  {
     height: 3;
 }
 
+TaskItem .task-item-title {
+    max-width: 45;
+}
+
 TaskItem .task-item-tags {
     dock: right;
     color: $secondary;
