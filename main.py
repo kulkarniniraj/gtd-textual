@@ -46,7 +46,7 @@ def adjust_dates():
                 dl.save_task(task)
 
 class MainWin(Horizontal):
-    
+
     def on_mount(self):
         print("Mounting MainWin")
         logger_utils.info("Mounting MainWin")
@@ -82,7 +82,10 @@ class GTDApp(App):
     title = "GTD App"
     CSS_PATH = "main.tcss"
     BINDINGS = [("q", "quit", "Quit"),
-                ("escape", "quit", "Quit")]
+                ("escape", "quit", "Quit"),
+                ("left", "focus_left", "Focus Sidebar"),
+                ("right", "focus_right", "Focus Main")
+                ]
     
 
     def on_mount(self):
@@ -96,7 +99,13 @@ class GTDApp(App):
     def action_request_quit(self):
         self.action_quit()
     
+    def action_focus_left(self):
+        logger_utils.info("Focusing Sidebar")
+        self.query_one('Sidebar').focus()
 
+    def action_focus_right(self):
+        logger_utils.info("Focusing Main")
+        self.query_one('TaskList').focus()
 
 if __name__ == "__main__":
     adjust_dates()
