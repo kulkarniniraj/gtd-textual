@@ -25,6 +25,10 @@ A getting things done TUI based app using python textual
   - Sidebar for easy view switching
   - Task filtering and sorting
 
+### Special features:
+- Automatically move tasks from **scheduled** to **Next** based on scheduled date
+- Automatically set date to **today** for overdue tasks
+
 ## Getting started:
 Run `run.sh`
 
