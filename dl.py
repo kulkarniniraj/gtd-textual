@@ -68,3 +68,11 @@ def get_all_tasks():
     with Session() as session:
         tasks = session.query(Task).order_by(Task.orderid).all()
         return tasks
+
+def delete_task(task):
+    """
+    Delete a task from the database.
+    """
+    with Session() as session:
+        session.delete(task)
+        session.commit()

@@ -29,7 +29,7 @@ class SchedPicker(ModalScreen):
 
     def action_exit(self):
         selected = self.query_one("#sched-picker").value
-
+        today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         if selected == 'today':
             # get today's date, set time to 00:00:00
             sched_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -37,7 +37,6 @@ class SchedPicker(ModalScreen):
             sched_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=1)
         elif selected == 'this_week':
             # before wednesday, set to wednesday, before friday, set to friday, otherwise set to next monday
-            today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
             if today.weekday() < 2:
                 day_delta = 2 - today.weekday()
             elif today.weekday() < 4:
@@ -50,7 +49,6 @@ class SchedPicker(ModalScreen):
             sched_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) + timedelta(days=day_delta)
         elif selected == 'next_month':
             # get the first day of the next month
-            today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
             if today.month == 12:   
                 next_month = 1
                 next_year = today.year + 1

@@ -141,3 +141,36 @@ SchedPicker Select {
 #sched-picker {
     
 }
+
+/***************** Delete Dialog **************/
+
+TaskDeleteDialog {
+    align: center middle;    
+}
+
+TaskDeleteDialog Vertical {
+    width: 60;
+    height: 10;
+    border: solid $accent 80%;
+    background: $surface-lighten-2;
+    padding: 1 1;
+}
+
+TaskDeleteDialog Horizontal {
+    align: center middle;
+    padding: 1 1 0 1;    
+}
+
+TaskDeleteDialog Label {
+    text-align: center;
+    width: 100%;
+}
+
+TaskDeleteDialog .bold {
+    
+    text-style: bold;
+}
+
+TaskDeleteDialog Button {
+    margin: 0 6;
+}

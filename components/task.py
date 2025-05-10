@@ -10,11 +10,36 @@ from textual.reactive import reactive
 from textual.screen import ModalScreen, Screen
 from textual.widgets import (Button, Checkbox, Footer, Header, Input, Label,
                              ListItem, ListView, Static, TextArea, Select)
+from textual.timer import Timer
 
 from components.side import Sidebar, SidebarItem
 from components.sched import SchedPicker
 import dl
 import logger.utils as logger_utils
+
+class TaskDeleteDialog(ModalScreen[bool]):
+    BINDINGS = [("escape", "dismiss", "Cancel")]
+
+    def __init__(self, task_item: dl.Task, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.item = task_item
+
+    def compose(self) -> ComposeResult:
+        yield Vertical(
+            Label(f"Are you sure you want to delete the task?"),
+            Label(f'"{self.item.title}"', classes="bold"),
+            Horizontal(
+                Button("Delete", variant="error", id="delete-button"),
+                Button("Cancel", id="cancel-button")
+            ),
+            id="task-delete-dialog"
+        )
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "delete-button":
+            self.dismiss(True)
+        else:
+            self.dismiss(False)
 
 class TaskDialog(ModalScreen[bool]):
     BINDINGS = [("d", "datepick", "Date Picker"),
@@ -141,7 +166,8 @@ class TaskList(ListView):
 
 class TaskScreen(Vertical):
     BINDINGS = [("n", "task_details_popup", "New Task"),
-                ("space", "mark_complete", "Mark Complete")]
+                ("space", "mark_complete", "Mark Complete"),
+                ("ctrl+d", "delete_task", "Delete Task")]
 
     tag = reactive('inbox', recompose=True)
     task_list = reactive([], recompose=True)
@@ -210,6 +236,18 @@ class TaskScreen(Vertical):
             self.refresh(recompose=True)
         # self.query_one('#task-list').focus()
 
+    def action_delete_task(self):
+        def delete_task_callback(result):
+            if result:
+                logger_utils.info(f"Deleting task: {active_task.todo_task.title}")
+                dl.delete_task(active_task.todo_task)
+                self.update_task_list()
+                self.refresh(recompose=True)
+
+        active_task = self.query_one('#task-list').highlighted_child
+        if active_task is not None:
+            self.app.push_screen(TaskDeleteDialog(active_task.todo_task), delete_task_callback)
+            
     def task_details_popup(self, task_item: dl.Task = None):
         if task_item is None:
             task_item = dl.create_empty_task()
