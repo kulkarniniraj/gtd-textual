@@ -35,3 +35,11 @@ Run `run.sh`
 ## TODO
 - Project wise organization of tasks
 - Show keyboard shortcuts in pop-up windows
+
+## Screenshots
+Task Screen:
+![Task Screen](./assets/gtd-screenshot.png)
+
+New Task Form:
+![New Task Screen](./assets/gtd-new.png)
+
