@@ -175,6 +175,8 @@ class TaskScreen(Vertical):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.update_task_list()
+        # Create a timer to update task list every 10 minutes (600 seconds)
+        self.set_interval(600, self.update_task_list)        
         
     def update_task_list(self):
         self.task_list = dl.get_all_tasks()
