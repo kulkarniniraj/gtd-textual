@@ -1,6 +1,5 @@
 from typing import Coroutine
 from datetime import datetime, timedelta
-from textual_datepicker import DatePicker, DateSelect
 
 from textual.app import App, ComposeResult
 from textual.binding import Binding
