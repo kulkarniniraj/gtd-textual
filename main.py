@@ -31,6 +31,13 @@ def restore_focus(app: App):
         app.query_one('Sidebar').focus()
 
 def adjust_dates():
+    """
+    Adjust the dates of tasks in the database.
+    If the task is scheduled for today, set the tag to 'next'.
+    If the task is scheduled for a past date, set the tag to 'next' and
+    set the scheduled date to today.
+    Run this function every 10 minutes.
+    """
     today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
     tasks = dl.get_all_tasks()
@@ -45,6 +52,10 @@ def adjust_dates():
                 dl.save_task(task)
 
 class MainWin(Horizontal):
+    """
+    Main window for the app.
+    Contains the sidebar and the main content area.
+    """
 
     def on_mount(self):
         print("Mounting MainWin")
@@ -108,5 +119,6 @@ class GTDApp(App):
 
 if __name__ == "__main__":
     adjust_dates()
+
     app = GTDApp()
     app.run()

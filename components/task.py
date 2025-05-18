@@ -18,6 +18,10 @@ import dl
 import logger.utils as logger_utils
 
 class TaskDeleteDialog(ModalScreen[bool]):
+    """
+    Task delete confirmation dialog.
+    Contains a title, a message, and a delete button.
+    """
     BINDINGS = [("escape", "dismiss", "Cancel")]
 
     def __init__(self, task_item: dl.Task, *args, **kwargs):
@@ -42,6 +46,10 @@ class TaskDeleteDialog(ModalScreen[bool]):
             self.dismiss(False)
 
 class TaskDialog(ModalScreen[bool]):
+    """
+    Task dialog for creating or editing tasks.
+    Contains a title, tags, project, description, and a save button.
+    """
     BINDINGS = [("d", "datepick", "Date Picker"),
                 ("escape", "dismiss", "Cancel"),
                 ("ctrl+s", "save", "Save")]
@@ -120,6 +128,10 @@ class TaskDialog(ModalScreen[bool]):
         self.dismiss(True)
 
 class TaskItem(ListItem):
+    """
+    Task item for displaying tasks.
+    Shows the task title, tags, and a checkbox for completion.
+    """
     
     def __init__(self, todo_task: dl.Task):
         super().__init__()
@@ -154,6 +166,10 @@ class TaskItem(ListItem):
         )
 
 class TaskList(ListView):
+    """
+    Task list for displaying tasks.
+    No specific functionality overridden
+    """
 
     def on_list_view_highlighted(self, event: ListView.Highlighted):
         logger_utils.info(f"TaskList Highlighted: {event.item} {self.index}")
@@ -165,6 +181,10 @@ class TaskList(ListView):
         # restore_focus(self.app)
 
 class TaskScreen(Vertical):
+    """
+    Task screen for displaying tasks.
+    Contains a list of tasks. On sidebar tag change, the task list will be updated.
+    """
     BINDINGS = [("n", "task_details_popup", "New Task"),
                 ("space", "mark_complete", "Mark Complete"),
                 ("ctrl+d", "delete_task", "Delete Task")]

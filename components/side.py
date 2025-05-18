@@ -13,6 +13,11 @@ from textual.widgets import (Button, Checkbox, Footer, Header, Input, Label,
 import logger.utils as logger_utils
 
 class Sidebar(ListView):
+    """
+    Sidebar for tag or project or search results
+    Changing the tag or project will change the task list, which will result 
+    in recomposing the task screen
+    """
 
     def on_list_view_highlighted(self, event: ListView.Highlighted):
         print(f"Sidebar Highlighted: {event.item} {self.index} {time.time()}")
@@ -33,6 +38,10 @@ class Sidebar(ListView):
         logger_utils.info(f"Sidebar Blurred: {event} idx: {self.index}")
 
 class SidebarItem(ListItem):
+    """
+    Sidebar item for tag or project or search results.
+    Must contain a label and a tag.
+    """
     def __init__(self, label: str, tag: str, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.label = label
