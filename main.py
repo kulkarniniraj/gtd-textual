@@ -100,6 +100,7 @@ class GTDApp(App):
 
     def on_mount(self):
         self.theme = "tokyo-night"
+        self.set_interval(600, adjust_dates)        
         # self.query_one('#main-content').focus()
         
     def compose(self) -> ComposeResult:
