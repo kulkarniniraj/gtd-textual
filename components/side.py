@@ -20,12 +20,25 @@ class Sidebar(ListView):
     """
     BINDINGS = [
         ("ctrl+f", "focus_search", "Search"),
+        ("A", "jump_to_tag('all')", "All Tasks"),
+        ("I", "jump_to_tag('inbox')", "Inbox"),
+        ("N", "jump_to_tag('next')", "Next"),
+        ("S", "jump_to_tag('scheduled')", "Scheduled"),
+        ("M", "jump_to_tag('maybe')", "Maybe"),
+        ("W", "jump_to_tag('waiting')", "Waiting"),
+        ("F", "jump_to_tag('finished')", "Finished")
     ]
 
     def action_focus_search(self):
         task_screen = self.app.query_one('#main-content')
         task_screen.query_one("#search-input").focus()
 
+    def action_jump_to_tag(self, tag):        
+        for i, item in enumerate(self.children):
+            if isinstance(item, SidebarItem) and item.tag == tag:
+                self.index = i
+                self.focus()
+                break
 
     def on_list_view_highlighted(self, event: ListView.Highlighted):
         print(f"Sidebar Highlighted: {event.item} {self.index} {time.time()}")

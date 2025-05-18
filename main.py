@@ -76,6 +76,8 @@ class MainWin(Horizontal):
                 SidebarItem("Project 3", "project3"),
                 SidebarItem("", "", disabled=True),
                 SidebarItem("Finished Tasks", "finished"),
+                SidebarItem("", "", disabled=True),
+                SidebarItem("All Tasks", "all"),
             ),
             id="sidebar"
         )
