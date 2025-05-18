@@ -187,13 +187,16 @@ class TaskScreen(Vertical):
     """
     BINDINGS = [("n", "task_details_popup", "New Task"),
                 ("space", "mark_complete", "Mark Complete"),
-                ("ctrl+d", "delete_task", "Delete Task")]
+                ("ctrl+d", "delete_task", "Delete Task"),
+                ("ctrl+f", "focus_search", "Search"),
+                ("escape", "clear_search", "Clear Search")]
 
     tag = reactive('inbox', recompose=True)
     task_list = reactive([], recompose=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.search_term = ""
         self.update_task_list()
         # Create a timer to update task list every 10 minutes (600 seconds)
         self.set_interval(600, self.update_task_list)        
@@ -222,11 +225,27 @@ class TaskScreen(Vertical):
                 tasks = [x for x in tasks if x.tag == 'waiting']
             else:
                 tasks = tasks
+
+        # Apply search filter if search term exists
+        if self.search_term:
+            search_term = self.search_term.lower()
+            tasks = [
+                task for task in tasks
+                if search_term in task.title.lower() or
+                   search_term in task.description.lower() or
+                   search_term in task.project.lower()
+            ]
+
         logger_utils.info(f"Filtering tasks: {tasks}")
         return tasks
 
     def compose(self) -> ComposeResult:
         logger_utils.info(f"Composing TaskScreen {time.time()}")
+        yield Horizontal(
+            Input(placeholder="Search tasks...", id="search-input", value=self.search_term),
+            Label(f"Found {len(self.filter_tasks())} tasks", id="search-status"),
+            id="search-container"
+        )
         yield TaskList(
             *[
                 TaskItem(task)
@@ -234,6 +253,22 @@ class TaskScreen(Vertical):
             ],
             id="task-list"
         )
+
+    def action_focus_search(self):
+        self.query_one("#search-input").focus()
+
+    def action_clear_search(self):
+        self.search_term = ""
+        self.query_one("#search-input").value = ""
+        self.refresh(recompose=True)
+
+    def on_input_changed(self, event: Input.Changed) -> None:
+        if event.input.id == "search-input":
+            self.search_term = event.value
+
+    def on_input_submitted(self, event: Input.Submitted) -> None:
+        if event.input.id == "search-input":
+            self.refresh(recompose=True)
 
     def on_list_view_selected(self, event: ListView.Selected):
         # print(f"Task selected: {event.item}")

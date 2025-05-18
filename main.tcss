@@ -9,6 +9,21 @@
     border: solid $primary;
 }
 
+#search-container {
+    height: 3;
+    margin: 0 1;
+}
+
+#search-container Input {
+    height: 3;
+    border: solid;
+}
+
+#search-status {
+    dock: right;
+    color: $text-muted;
+}
+
 SidebarItem.disabled  {
     color: $text-muted;
     background: $primary-muted
@@ -28,7 +43,7 @@ TaskItem .task-item-title {
 
 TaskItem .task-item-tags {
     dock: right;
-    color: $secondary;
+    color: $text-muted;    
 }
 
 TaskItem Checkbox {

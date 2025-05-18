@@ -18,6 +18,14 @@ class Sidebar(ListView):
     Changing the tag or project will change the task list, which will result 
     in recomposing the task screen
     """
+    BINDINGS = [
+        ("ctrl+f", "focus_search", "Search"),
+    ]
+
+    def action_focus_search(self):
+        task_screen = self.app.query_one('#main-content')
+        task_screen.query_one("#search-input").focus()
+
 
     def on_list_view_highlighted(self, event: ListView.Highlighted):
         print(f"Sidebar Highlighted: {event.item} {self.index} {time.time()}")
